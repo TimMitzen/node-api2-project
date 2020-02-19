@@ -93,7 +93,7 @@ router.get('/:id', async (req,res)=>{
    const id = req.params.id;
    post.findById(id)
    .then(posts=>{
-      if(id){
+      if(posts.length > 0){
          res.status(200).json(posts)
       } 
       else{
@@ -107,14 +107,15 @@ router.get('/:id', async (req,res)=>{
 
 router.get('/:id/comments',async (req,res)=>{
    const postId = req.params.id;
+   
    console.log(postId)
    post.findPostComments(postId)
        
    .then(comment=>{
-      if(comment){
-         res.status(200).json(comment)
-      }else{
+      if(!comment){
          res.status(404).json({errorMessage:'Id not found'})
+      }else{
+         res.status(200).json({comment})
       }
    })
    .catch(error=>{
@@ -128,17 +129,21 @@ router.put('/:id',(req,res)=>{
    const posts = req.body;
    console.log(postId)
    post.findPostComments(postId)
-   
+   const postnonID = post.findPostComments(postId);
+   if(!postnonID.length > 0){
+      res.status(404).json({errorMessage: "no such id"})
+   }
+   console.log(postnonID)
    post.update(postId,posts)
    .then(updates=>{
-      if(!id){
+      if(!postId){
          res.status(404).json({errorMessage:'Post not found'})
       }else if(!posts.title || !posts.contents) {
          res.status(400).json({
             errorMessage: "please give title and contents"
          })
       }else{
-         res.status(200).json({updates})
+         res.status(201).json({updates})
 
       }
    })
@@ -150,12 +155,13 @@ router.put('/:id',(req,res)=>{
 
 router.delete('/:id' ,async (req,res)=>{
    const id = req.params.id;
+   console.log(id)
   post.remove(id)
   .then(deleted=>{
-     if(id){
+     if(!deleted){
         res.status(404).json({errorMessage: 'ID Not Found'})
      }else{
-        res.status(200).json({deleted})
+        res.status(200).json({deleted:"deleted"})
      }
   })
   .catch(error=>{
