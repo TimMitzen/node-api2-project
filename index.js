@@ -9,7 +9,11 @@ const server = express();
 server.use(express.json());
 server.use('/api/posts', commentRouter)
 
-
+router.get("/", (req, res) => {
+	res.status(200).json({
+		message: process.env.SECRET_MESSAGE || "Welcome",
+	})
+})
 server.get('/',(req,res)=>{
    res.send({message:'this is the server'})//res is for responses
 })
