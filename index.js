@@ -14,7 +14,7 @@ server.get('/',(req,res)=>{
    res.send({message:'this is the server'})//res is for responses
 })
 
-const port = 8000
+const port = process.env.Port || 8000
 server.listen(port,()=>{
    console.log('Server is running')
 })
